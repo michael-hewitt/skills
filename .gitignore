@@ -1,0 +1,4 @@
+# Only track skills we own — everything else is installed via npx/packages
+skills/*
+!skills/lazygit/
+!skills/implement-issues/
