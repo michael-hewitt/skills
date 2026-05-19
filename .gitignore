@@ -1,4 +1,15 @@
-# Only track skills we own — everything else is installed via npx/packages
+# Ignore everything by default — this repo only tracks personal skills
+*
+
+# Track the skills directory structure
+!skills/
+
+# Ignore all skills (third-party, installed via npx)
 skills/*
+
+# Except the ones we own
 !skills/lazygit/
 !skills/implement-issues/
+
+# Track this file
+!.gitignore
