@@ -10,6 +10,8 @@ skills/*
 # Except the ones we own
 !skills/lazygit/
 !skills/implement-issues/
+!skills/orca-open-file/
+!skills/orca-open-file/**
 
 # Track this file
 !.gitignore
