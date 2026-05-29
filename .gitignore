@@ -14,6 +14,8 @@ skills/*
 !skills/orca-open-file/**
 !skills/orca-open-herd-url/
 !skills/orca-open-herd-url/**
+!skills/orca-issues/
+!skills/orca-issues/**
 
 # Track this file
 !.gitignore
