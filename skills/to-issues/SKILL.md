@@ -53,6 +53,23 @@ For each approved slice, create a GitHub issue using `gh issue create`. Use the 
 
 Create issues in dependency order (blockers first) so you can reference real issue numbers in the "Blocked by" field.
 
+If the source material is a GitHub issue, after each child issue is created, attach it as an official GitHub sub-issue of the parent issue. If this fails, report the failure to the user.
+
+Use this pattern after `gh issue create` returns the child issue number:
+
+```bash
+parent_id="$(gh issue view <parent-number> --json id --jq .id)"
+child_id="$(gh issue view <child-number> --json id --jq .id)"
+
+gh api graphql -f query='
+mutation($parentId: ID!, $childId: ID!) {
+  addSubIssue(input: { issueId: $parentId, subIssueId: $childId, replaceParent: true }) {
+    issue { number }
+    subIssue { number }
+  }
+}' -f parentId="$parent_id" -f childId="$child_id"
+```
+
 <issue-template>
 ## Parent
 
