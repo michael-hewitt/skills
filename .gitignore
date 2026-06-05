@@ -1,21 +1,5 @@
-# Ignore everything by default — this repo only tracks personal skills
+# Ignore everything by default
 *
-
-# Track the skills directory structure
-!skills/
-
-# Ignore all skills (third-party, installed via npx)
-skills/*
-
-# Except the ones we own
-!skills/lazygit/
-!skills/implement-issues/
-!skills/orca-open-file/
-!skills/orca-open-file/**
-!skills/orca-open-herd-url/
-!skills/orca-open-herd-url/**
-!skills/orca-issues/
-!skills/orca-issues/**
 
 # Track this file
 !.gitignore
