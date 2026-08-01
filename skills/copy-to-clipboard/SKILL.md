@@ -46,6 +46,35 @@ Substitute plain ASCII throughout:
 Formatting is safe — `<b>`, `<i>`, `<ol>`, `<ul>`, `<table>`, and inline CSS all survive the
 conversion. It is only the characters that break.
 
+## Setting a font: sizes are in `px`, not `pt`
+
+When the user asks for a specific font ("Helvetica 12pt"), wrap the fragment in a single
+`<div>` with inline CSS. That is enough — the style inherits into paragraphs and into table
+cells, so there is no need to repeat it on every element.
+
+**`textutil` reads a CSS `pt` value as if it were `px`, then converts px to pt at 4/3.** So
+`font-size: 12pt` lands in the RTF as 16pt — a third too big. Express the size the user asked
+for in `px` and it comes out correct:
+
+```html
+<div style="font-family: Helvetica, sans-serif; font-size: 12px;">
+  ... fragment ...
+</div>
+```
+
+| You write | RTF result | Pasted size |
+|---|---|---|
+| `font-size: 12pt` | `\fs32` | 16pt (wrong) |
+| `font-size: 12px` | `\fs24` | 12pt (right) |
+
+Verify before reporting success. RTF `\fsNN` is in half-points, so halve it to get the point
+size, and check the font table names the family you asked for:
+
+```bash
+textutil -format html -inputencoding UTF-8 -convert rtf -stdout snippet.html \
+  | rg -o 'fonttbl.*|fs[0-9]+' | head -3
+```
+
 ## Always pass `-inputencoding UTF-8`
 
 Without it `textutil` misreads the file as Latin-1 and each literal UTF-8 character becomes
