@@ -1,6 +1,6 @@
 ---
 name: obd-diagnostics
-description: Read vehicle diagnostic trouble codes (check-engine codes) over a USB OBD-II adapter (OBDLink EX or other ELM327/STN-compatible) on macOS, including environment setup, driver/permission checks, and port detection. Use when the user wants to read or scan car codes, diagnose a check engine light, or mentions OBD, OBD-II, DTCs, OBDLink, or ELM327.
+description: Read vehicle diagnostic trouble codes (check-engine codes) and live sensor data (fuel trims, MAF, coolant temp) over a USB OBD-II adapter (OBDLink EX or other ELM327/STN-compatible) on macOS, including environment setup, driver/permission checks, and port detection. Use when the user wants to read or scan car codes, diagnose a check engine light or lean/rich code, or mentions OBD, OBD-II, DTCs, fuel trims, OBDLink, or ELM327.
 ---
 
 # OBD-II Diagnostics (read-only)
@@ -51,7 +51,24 @@ detect) are fine. If a write seems necessary, stop and explain it first.
    DTCs (Mode 07), permanent DTCs (Mode 0A), freeze-frame DTC (Mode 02 PID 02).
    Raw ELM log and parsed JSON are saved in `--log-dir` — keep them.
 
-5. **Report and stop.** Give the user: stored/pending/permanent codes with
+5. **Fuel-trim workup (optional, for lean/rich codes; engine must run — ask
+   the user first).** With their go-ahead to start the engine (Park, parking
+   brake set):
+
+   - `scripts/wait_warm.py --port PORT` — run in the background; polls coolant
+     temp every 20 s and exits 0 at 80 °C (VW dash gauges are buffered and
+     show "normal" from ~75 °C — trust the ECU value, not the dash).
+   - `scripts/live_trims.py --port PORT --seconds 25 --label idle-warm --log-dir ~/.cache/obd-diag`
+     — samples RPM, coolant, STFT/LTFT both banks, MAF, and fuel status;
+     prints min/avg/max and saves JSON. A cold-idle sample before warm-up is
+     also worth taking — lean faults are often largest cold.
+   - Ask the user to hold ~2500 rpm steady, then sample again with
+     `--label 2500rpm`.
+   - Interpret with the table in [REFERENCE.md](REFERENCE.md): compare total
+     trim (ST+LT) per bank across idle vs 2500 rpm, and sanity-check MAF
+     (~1 g/s per liter of displacement at warm idle).
+
+6. **Report and stop.** Give the user: stored/pending/permanent codes with
    plain-English meanings, whether the MIL is commanded on, protocol and
    adapter info, and any errors. Distinguish clearly between what the vehicle
    literally reported and your interpretation of likely causes — a DTC does

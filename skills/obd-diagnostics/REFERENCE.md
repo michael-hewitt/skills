@@ -64,14 +64,29 @@ screen /dev/cu.usbserial-XXXX 115200
 All of these are read/init commands. Avoid `AT PP` (persistent programmable
 parameters) and any `ATSH`/raw-header writes beyond standard queries.
 
-## Live data (requires engine running — ask the user first)
+## Fuel-trim interpretation (lean/rich codes)
 
-Useful for chasing a lean code (e.g. P2189): `SHORT_FUEL_TRIM_1/2`,
-`LONG_FUEL_TRIM_1/2`, `MAF`, `RPM`, `COOLANT_TEMP`, `INTAKE_PRESSURE`,
-`O2_SENSORS` — all Mode 01 reads via `obd.commands.*`. High positive trims at
-idle that normalize at 2500 rpm point to a vacuum leak; high at all speeds
-points to MAF/fuel supply. Reading these is still read-only, but the engine
-must be running, so get the user's go-ahead.
+Use `scripts/live_trims.py` at cold idle, warm idle (after `wait_warm.py`),
+and steady 2500 rpm. Work from **total trim = STFT avg + LTFT** per bank;
+STFT near zero just means LTFT has already absorbed the error. Trims are only
+trustworthy in closed loop on a warm engine (~80 °C+); expect the biggest
+lean excursions cold.
+
+| Pattern | Points to |
+|---|---|
+| High + at idle, normalizes at 2500 rpm | Vacuum leak (fixed air leak matters most at low airflow): PCV valve/hoses (classic VW), intake gaskets, booster lines |
+| High + at all speeds, roughly constant | Underreporting MAF, fuel supply (pump/filter/regulator), exhaust leak upstream of O2 |
+| Moderate + everywhere, one bank worse, worst when cold | Small leak biased to that bank (PCV feed, purge/N80 valve, injector falloff) — smoke test, prioritize the worse bank |
+| Negative (rich) trims | Leaking injector, fuel in purge vapor, overreporting MAF |
+
+Sanity checks: MAF at warm idle ≈ 1 g/s per liter of displacement (3.6L →
+~3.5 g/s; ~11 g/s at 2500 rpm unloaded is normal). `FUEL_STATUS` must report
+closed loop on both banks. Generic LTFT thresholds for setting a code are
+~±25%, so a stored lean code alongside modest current trims usually means the
+fault is intermittent or condition-dependent (cold, high load) — sample those
+conditions. Other useful PIDs: `INTAKE_PRESSURE`, `O2_SENSORS`,
+`FUEL_RAIL_PRESSURE_DIRECT`. A load test (someone else driving) or pinching
+candidate vacuum lines while watching STFT are still read-only follow-ups.
 
 ## Storage layout
 
