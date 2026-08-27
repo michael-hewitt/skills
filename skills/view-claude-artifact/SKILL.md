@@ -66,6 +66,14 @@ standalone and render locally:
    work normally.
 
 Notes:
+- **Artifacts have published versions, and picking the right one matters.**
+  The tokenized frame URL serves exactly one published version — whatever the
+  viewer currently shows. If the user names a version (e.g. "pick X in the
+  version selector"), that's the viewer's version picker: the dropdown next
+  to the artifact title in the TOP frame (visible in `orca snapshot`, so
+  `orca click --element <ref>` works on it — it's not inside the artifact
+  iframe). Select the named version first, wait, then re-read the iframe src.
+  Reading the wrong version can silently disagree with the user's spec.
 - The tokenized frame URL is version-stamped; always re-read it from the live
   page rather than reusing a saved one.
 - Google Fonts links load fine from `file://`.
