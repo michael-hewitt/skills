@@ -1,0 +1,45 @@
+<style>
+  /* Pandoc emits <col style="width: 25%" /> on every column of a pipe table,
+     so the narrow PR / Closes / Merged columns get exactly as much width as
+     the Title column. Override those inline widths (hence !important) and let
+     Title absorb the remainder. Costs ~2 pages on a typical week. */
+  table {
+    table-layout: fixed;
+    width: 100%;
+  }
+
+  /* Column 1 -- "PR" (e.g. #709) */
+  colgroup col:nth-child(1) {
+    width: 7% !important;
+  }
+
+  /* Column 2 -- "Title", takes whatever the other columns leave */
+  colgroup col:nth-child(2) {
+    width: auto !important;
+  }
+
+  /* Column 3 -- "Closes", in the four-column tables only. In the
+     three-column dependency table this position is "Merged", which the
+     :last-child rule below handles instead. */
+  colgroup col:nth-child(3):not(:last-child) {
+    width: 18% !important;
+  }
+
+  /* Final column -- "Merged" (a date) */
+  colgroup col:last-child {
+    width: 13% !important;
+  }
+
+  th, td {
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+    hyphens: none;
+    vertical-align: top;
+  }
+
+  /* Keep the narrow end columns from wrapping mid-token */
+  td:first-child, th:first-child,
+  td:last-child, th:last-child {
+    white-space: nowrap;
+  }
+</style>
