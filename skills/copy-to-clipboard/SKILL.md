@@ -7,7 +7,8 @@ description: Put text on the macOS clipboard as rich text (RTF) or plain text, r
 
 ## Rich text
 
-Write the content as an HTML fragment to a scratch file, then convert and copy:
+Write the content as an HTML fragment to a scratch file, wrapped in the default font (see
+"Font" below -- Helvetica 12 unless the user names another), then convert and copy:
 
 ```bash
 textutil -format html -inputencoding UTF-8 -convert rtf -stdout snippet.html \
@@ -46,15 +47,17 @@ Substitute plain ASCII throughout:
 Formatting is safe — `<b>`, `<i>`, `<ol>`, `<ul>`, `<table>`, and inline CSS all survive the
 conversion. It is only the characters that break.
 
-## Setting a font: sizes are in `px`, not `pt`
+## Font: always Helvetica 12 by default; sizes are in `px`, not `pt`
 
-When the user asks for a specific font ("Helvetica 12pt"), wrap the fragment in a single
-`<div>` with inline CSS. That is enough — the style inherits into paragraphs and into table
-cells, so there is no need to repeat it on every element.
+**Every rich-text copy gets an explicit font.** Default to Helvetica 12pt unless the user
+names a different font or size; never leave the fragment unstyled, because an unstyled
+fragment takes whatever the paste target's default is. Wrap the fragment in a single `<div>`
+with inline CSS. That is enough — the style inherits into paragraphs and into table cells,
+so there is no need to repeat it on every element.
 
 **`textutil` reads a CSS `pt` value as if it were `px`, then converts px to pt at 4/3.** So
-`font-size: 12pt` lands in the RTF as 16pt — a third too big. Express the size the user asked
-for in `px` and it comes out correct:
+`font-size: 12pt` lands in the RTF as 16pt — a third too big. Express the size in `px` and
+it comes out correct. This is the default wrapper:
 
 ```html
 <div style="font-family: Helvetica, sans-serif; font-size: 12px;">
