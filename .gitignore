@@ -1,5 +1,8 @@
-# Ignore everything by default
+# Ignore everything by default; skills are added with `git add -f`.
 *
 
 # Track this file
 !.gitignore
+
+# Secrets live in .env (see README.md) and must never be committed, even with -f.
+.env
