@@ -30,7 +30,7 @@ Also confirm each step is *designed* to leave the whole suite green — a step m
 
 ## Step 3 — Run one sub-agent per step, serially
 
-Launch each sub-agent only after the previous one's commit is verified. Each sub-agent's prompt must contain:
+Launch each sub-agent only after the previous one's commit is verified. **Every implementation sub-agent runs on Opus**: pass `model: "opus"` to the Agent tool on each launch (a `fork` ignores the override, so use a fresh general-purpose agent, not a fork). Each sub-agent's prompt must contain:
 
 1. **The issue context**: instruct it to run `gh issue view <N> --comments` to read the issue and its PRD before writing code.
 2. **Its step instructions**: precisely what to build in this step, with known file pointers, and what is explicitly out of scope (later steps).
@@ -58,6 +58,15 @@ After each sub-agent reports done:
 ## Final gate — full suite once, after the last step
 
 After the last sub-agent's commit lands, run the full Pest suite once (`composer test` — parallel, capped per CLAUDE.md). Fix any regressions (fixes may be their own commit) before reporting the branch done. This is the only point in the workflow where the full suite runs.
+
+## Code review — after the final step, every time
+
+Once the final gate is green, review everything the Opus sub-agents produced before reporting the branch done. This is not optional and is not per step: it runs once, over the whole branch, after the last step's commit and the full-suite fixes.
+
+1. Run `/code-review` against the branch's diff from the merge-base with the main branch (the whole set of sub-agent commits, plus any regression-fix commits).
+2. Triage the findings: fix genuine defects (correctness, missed spec requirements, broken invariants) in a follow-up commit or by continuing the responsible sub-agent; note and skip findings that are false positives or out of scope.
+3. Re-run the tests affected by any review fixes.
+4. Report the review outcome to the user alongside the branch summary: what was found, what was fixed, what was deliberately left.
 
 ## Boundaries
 
