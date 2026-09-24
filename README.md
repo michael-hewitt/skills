@@ -1,7 +1,8 @@
 # Michael's agent skills
 
 Personal skills for Claude Code and other agents. Each skill lives in `skills/<name>/` with
-a `SKILL.md`; `~/.claude/skills` is a symlink to `skills/`.
+a `SKILL.md`; `~/.claude/skills` and `~/.codex/skills` are both symlinks to `skills/`, and Codex also reads
+`~/.agents/skills` directly.
 
 New skills are picked up by `git status` like any other file; `.gitignore` excludes only
 `.env`, the `skills/synced/` cache and build noise. Third-party skills are committed too, and

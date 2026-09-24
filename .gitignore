@@ -4,6 +4,9 @@
 # Claude Code's local copy of skills synced from claude.ai; rewritten automatically.
 skills/synced/
 
+# Codex's built-in skills; Codex installs and rewrites these itself (~/.codex/skills links here).
+skills/.system/
+
 # Build and OS noise.
 __pycache__/
 .DS_Store
