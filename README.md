@@ -3,14 +3,15 @@
 Personal skills for Claude Code and other agents. Each skill lives in `skills/<name>/` with
 a `SKILL.md`; `~/.claude/skills` is a symlink to `skills/`.
 
-`.gitignore` ignores everything by default, so new skill files must be added with
-`git add -f`. Third-party skills are tracked in `skills-lock.json` / `.skill-lock.json`.
+New skills are picked up by `git status` like any other file; `.gitignore` excludes only
+`.env`, the `skills/synced/` cache and build noise. Third-party skills are committed too, and
+their sources are recorded in `skills-lock.json` / `.skill-lock.json`, so updating them
+shows up as a normal diff to review.
 
 ## Secrets
 
 Some skills need API tokens. They are read from environment variables first, then from
-`.env` at the root of this repository. `.env` is gitignored (explicitly, so even `git add -f`
-will not pick it up) and must never be committed or copied into a skill directory.
+`.env` at the root of this repository. `.env` is gitignored and must never be committed or copied into a skill directory.
 
 Copy this template to `.env` and fill in the values:
 
