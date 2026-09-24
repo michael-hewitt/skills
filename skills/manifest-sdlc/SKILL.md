@@ -41,13 +41,17 @@ Without this wording the agent treats the issue as an issue-scoped engagement ("
 ONLY") and may fast-lane it as a single fix.
 
 ```markdown
-This issue is the trigger for the **<Project name>** project. Linear no longer allows an agent to be set as project lead, so the project is handed to you through this issue instead. Treat it as the whole project, not a single fix: do not fast-lane it. Run the full engineering design, break it into issues under this project, build on one shared branch in `<owner/repo>`, open one PR, and take the design and the PR to the gatekeepers as usual.
+This issue is the trigger for the **<Project name>** project (<project URL>, project ID `<project uuid>`). Linear no longer allows an agent to be set as project lead, so the project is handed to you through this issue instead. Treat it as the whole project, not a single fix: do not fast-lane it. Run the full engineering design, break it into issues under this project, build on one shared branch in `<owner/repo>`, open one PR, and take the design and the PR to the gatekeepers as usual.
 
 Everything you need is in the project description: <list what it covers, plus any Linear documents or issues with assets>.
 
 Repository is `<owner/repo>`. Read its `<CLAUDE.md or AGENTS.md>` first. PM for QA handoff: <name>. Gatekeepers: <names>.
 ```
 
+- Always include the project URL and UUID (`get_project` returns both). On 2026-09-24 the
+  agent looked a new project up by name, got "Entity not found: Project", and stopped to ask.
+  If the brief is long or the lookup fails anyway, paste the project description into the
+  session thread too.
 - Repository: the team's repos are `crescendosw/webapp` (default; read `CLAUDE.md`) and
   `crescendosw/website` (read `AGENTS.md`). Name the repo explicitly when it isn't webapp.
 - PM and gatekeepers: ask the user if they haven't said. Past projects used Isaiah Holt as PM
