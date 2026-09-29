@@ -69,10 +69,19 @@ worktree deletion and app restarts, and catches up if the Mac was asleep.
      happen once on the next opportunity.
    - **Time**: avoid :00 and :30; give `--timezone` explicitly.
 
+   - **Make the verdict visible.** Orca records every run as `completed` whatever the agent
+     concluded, and the Automations view shows the automation's name. So end the prompt with:
+     "run `orca automations edit <id> --name '<name>: PASS' --disabled` (or `: FAIL - <reason>`)"
+     and "your final reply must start with `VERDICT: PASS` or `VERDICT: FAIL - <reason>`". The
+     id is only known after creation: create first, then `orca automations edit <id> --prompt`
+     with the id filled in. Do not tell the agent to `exit` its shell: the run's output snapshot
+     then captures only the startup banner.
+
 5. **Verify** with `orca automations show <id> --json`: convert `nextRunAt` (epoch ms) to local
    time and confirm the date, the workspace path and the precheck. Do **not** `orca automations
    run` a one-shot whose prompt posts to GitHub or reopens issues: that performs the real check
-   now. To prove the plumbing, create a separate `--disabled` test automation with a harmless
+   now. A manual run also **skips the precheck**, so it proves nothing about the year guard. To
+   prove the plumbing, create a separate `--disabled` test automation with a harmless
    prompt, `run` it, check `orca automations runs --id <id> --json`, then remove it.
 
 6. **Tell the user** the automation name and id, the local run time, what it will check, the
